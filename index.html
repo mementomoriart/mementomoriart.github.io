@@ -1,6 +1,555 @@
 <!DOCTYPE html>
 <html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>mementomoriart</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon"> 
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r79/three.min.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Darker+Grotesque&display=swap" rel="stylesheet">
+    
+
+</head>
+
+<style>
+
+    body{
+        background: black;
+        min-height: 1000px;
+        margin: 0;
+    }
+
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: 'Darker Grotesque', sans-serif;
+        font-size: 18px;
+        margin-top: 8px;
+        margin-right: 8px;
+    }
+
+    li {
+        float: right;
+    }
+
+    li a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 8px 16px;
+        text-decoration: none;
+    }
+
+    li a:hover {
+        cursor: pointer;
+    }
+
+    li a:hover:not(.active) {
+        border-bottom: none;
+    }
+
+    .active {
+        border-bottom: white 1px solid;
+    }   
+
+
+
+    
+    #artworksContainer, #aboutContainer{
+        margin-top: 10px;
+    }
+
+
+
+    #columns {
+        column-width: 320px;
+        column-gap: 15px;
+        width: 90%;
+        max-width: 1100px;
+        /*margin: 50px auto;*/
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    div#columns figure {
+        background: #fefefe;
+        border: 2px solid #fcfcfc;
+        box-shadow: 0 1px 2px rgba(34, 25, 25, 0.4);
+        margin: 0 2px 15px;
+        padding: 15px;
+        transition: opacity .4s ease-in-out;
+        display: inline-block;
+        column-break-inside: avoid;
+        z-index: 2;
+    }
+
+    div#columns figure img {
+        width: 100%; height: auto;
+        /*border-bottom: 1px solid #ccc;
+        padding-bottom: 15px;
+        margin-bottom: 5px;*/
+    }
+
+    div#columns figure figcaption {
+        font-size: .9rem;
+        color: #444;
+        line-height: 1.5;
+    }
+
+    div#columns small { 
+        font-size: 1rem;
+        float: right; 
+        text-transform: uppercase;
+        color: #aaa;
+    } 
+
+    div#columns small a { 
+        color: #666; 
+        text-decoration: none; 
+        transition: .4s color;
+    }
+
+    div#columns:hover figure:not(:hover) {
+	    opacity: 0.4;
+    }
+
+    @media screen and (max-width: 750px) { 
+        #columns { column-gap: 0px; margin: 0 !important; }
+        #columns figure { width: 100%;  transition: none;}
+    }
+
+    .modal{
+	    display: none;
+        position: fixed;
+        top: 0;
+        background: rgba(0, 0, 0, 0.9);
+        width: 100%;
+        height: 100%;
+        z-index: 5;
+        text-align: center;
+        
+        height: 100%;
+        margin: 0 auto;
+
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #imageContainer{
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        min-height: 24em;
+        -webkit-box-pack: center;
+        -webkit-justify-content: center;
+        -ms-flex-pack: center;
+        justify-content: center;
+        max-width: 80%;
+        margin-left: 10%;
+        margin-right: 10%;
+        padding-top: 3em;
+        padding-bottom: 3em;
+    }
+
+
+    #modalImg{
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+
+
+    #aboutContainer{
+        display: none;
+    }
+
+    #aboutContent{
+        display: block;
+    }
+
+    #basicTextBox{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        border-bottom: 1px solid white;
+        width: 60%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #general,#aboutText{
+        font-family: 'Darker Grotesque', sans-serif;
+        color: white;
+        text-align: center;
+    }
+
+    #general{
+        font-size: 26px;
+        margin-bottom: 6px;
+    }
+
+
+    #textBox{
+        width: 50%;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: left;
+    }
+
+    #aboutText{
+        font-size: 18px;
+    }
+
+    #instagram{
+        width: 28px;
+        height: 28px;
+        margin: 8px;
+        margin-left: 18px;
+        float: right;
+        top: 8px;
+    }
+
+    #catalogBox{
+        padding: 5px;
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+        margin-top: 25%;
+    }
+
+    #catalogInfo{
+        cursor: pointer;
+        color: white;
+        font-family: 'Darker Grotesque', sans-serif;
+        font-size: 18px;
+        font-weight: 500;
+        transition: color 0.5 ease-in-out;
+        text-decoration: none;
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-bottom: 3px;
+    }
+    
+
+    #catalogInfo:hover{
+        border-bottom: 1px solid white;
+    }
+
+    #contactBox{
+        margin-top: 5%;
+        border-top: 1px solid white;
+        border-bottom: 1px solid white;
+        padding: 5px;
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    #mailTo{
+        color: white;
+        font-family: 'Darker Grotesque', sans-serif;
+        font-size: 20px;
+        font-weight: 500;
+        transition: color 0.5 ease-in-out;
+        text-decoration: none;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    #mailTo:hover{
+        background-color: white;
+        -webkit-transition: background-color 1000ms linear;
+        -ms-transition: background-color 1000ms linear;
+        transition: background-color 1000ms linear;
+        color: black;
+    }
+
+
+</style>
+
+
 <body>
-<h1>miu</h1>
+
+        <!-- modal -->
+        <div class="modal" id="overlay">
+            <div id="imageContainer">
+                    <div id="image"><img src="" id="modalImg"></div>
+            </div>
+        </div>
+
+        <!-- navigation bar -->
+        <ul>
+            <a href="https://www.instagram.com/lunart.miu/" target="blank" title="instagram">
+                <img id="instagram" src="assets/icons/instagram.svg">
+            </a>
+            <li><a id="aboutbutton" onclick="showAbout(id)">about</a></li>
+            <li><a id="artworksbutton" class="active" onclick="showArworks(id)">artworks</a></li>
+        </ul>
+
+
+        
+
+        
+        <!-- artworks grid-->
+
+        <div id="artworksContainer" >
+
+                <div id="columns">
+                
+            
+                        <figure class="showModal" id="assets/images/1.jpg">
+                            <img src="assets/images/1.jpg">
+                            <!--<figcaption>1</figcaption>-->
+                        </figure>
+             
+            
+                        <figure class="showModal" id="assets/images/2.jpg">
+                            <img src="assets/images/2.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/3.jpg">
+                            <img src="assets/images/3.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/4.jpg">
+                            <img src="assets/images/4.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/5.jpg">
+                            <img src="assets/images/5.jpg">
+            
+                        </figure>
+            
+            
+            
+                        <figure class="showModal" id="assets/images/6.png">
+                            <img src="assets/images/6.png">
+            
+                        </figure>
+                
+                        <figure class="showModal" id="assets/images/7.png">
+                            <img src="assets/images/7.png">
+            
+                        </figure>
+                
+                        <figure class="showModal" id="assets/images/8.png">
+                            <img src="assets/images/8.png">
+            
+                        </figure>
+                
+                        <figure class="showModal" id="assets/images/9.png">
+                            <img src="assets/images/9.png">
+            
+                        </figure>
+                
+                        <figure class="showModal" id="assets/images/10.png">
+                            <img src="assets/images/10.png">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/11.jpg">
+                            <img src="assets/images/11.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/12.png">
+                            <img src="assets/images/12.png">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/13.jpg">
+                            <img src="assets/images/13.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/14.jpg">
+                            <img src="assets/images/14.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/15.jpg">
+                            <img src="assets/images/15.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/16.png">
+                            <img src="assets/images/16.png">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/17.png">
+                            <img src="assets/images/17.png">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/18.jpg">
+                            <img src="assets/images/18.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/19.jpg">
+                            <img src="assets/images/19.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/20.jpg">
+                            <img src="assets/images/20.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/21.jpg">
+                            <img src="assets/images/21.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/22.jpg">
+                            <img src="assets/images/22.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/23.jpg">
+                            <img src="assets/images/23.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/24.jpg">
+                            <img src="assets/images/24.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/25.jpg">
+                            <img src="assets/images/25.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/26.jpg">
+                            <img src="assets/images/26.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/27.jpg">
+                            <img src="assets/images/27.jpg">
+            
+                        </figure>
+            
+                        <figure class="showModal" id="assets/images/28.jpg">
+                            <img src="assets/images/28.jpg">
+            
+                        </figure>
+                              
+                              
+                        <!--
+                            <small>Art &copy; <a href="//clairehummel.com">Claire Hummel</a></small>
+                        -->
+                    </div>
+
+
+        </div>
+
+
+        
+
+
+
+
+        <!-- about section -->
+
+        <div id="aboutContainer">
+            <div id="aboutContent">
+
+                    <div id="basicTextBox">
+                        <p id="general">Lejla Pleho / Academy of Fine arts Sarajevo / Etching, printmaking</p>
+                    </div>
+                    
+                    <div id="textBox">
+                       <p id="aboutText">
+                            Inspiration for this work comes 
+                            from the darkness that is in the very core of human existence; 
+                            from the darkness, the aniexity, the feeling of isolation, 
+                            and the solitude that exists in every concious being because of
+                            the burden of existence and struggle with ourselves. 
+                            This state is no exception, but is inherent in the very human 
+                            nature that modern man is compelled to exert from fear of 
+                            condemination of those forbidden, taboo feelings and thoughts, 
+                            which ultimately leads to suicidal tendencies, feeling rejected 
+                            and other deviations, which society categorizes as pathological. 
+                        </p>
+                    </div>
+
+                    <div id="catalogBox">
+                        <a id="catalogInfo" href="assets/pdf/katalog3.pdf" target="blank">Browse the catalog(pdf)</a>
+                    </div>
+                    
+                    <p id="contactBox">
+                        <a id="mailTo" href="mailto:Mementomori.lunart@gmail.com">email to Mementomori.lunart@gmail.com</a>  
+                    </p>
+
+                    
+            </div>
+        </div>
+
 </body>
+
+<script>
+    
+
+$(".showModal").click(function(event){
+	$(".modal").show();
+	var x = $(event.currentTarget).attr("id");
+	
+	$("#modalImg").attr("src", x);
+	//console.log(x);
+});
+
+
+
+$("#overlay").click(function(){
+	$(".modal").hide();
+});
+
+$('#aboutbutton').click(function(e){    
+    $('#artworksContainer').fadeOut('slow', function(){
+        $('#aboutContainer').fadeIn('slow');
+    });
+});
+
+function showArworks() {
+    document.getElementById("artworksbutton").classList.add("active");
+    document.getElementById("aboutbutton").classList.remove("active");
+    document.getElementById("aboutContainer").style.display = "none";
+    document.getElementById("artworksContainer").style.display = "block";
+}
+
+function showAbout() {
+    document.getElementById("aboutbutton").classList.add("active");
+    document.getElementById("artworksbutton").classList.remove("active");
+    document.getElementById("artworksContainer").style.display = "none";
+    document.getElementById("aboutContainer").style.display = "block";
+}
+
+</script>
+
+
+
+
+
 </html>
