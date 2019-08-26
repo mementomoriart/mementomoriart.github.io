@@ -173,7 +173,7 @@
 
 
 
-    #aboutContainer{
+    #artworksContainer{
         display: none;
     }
 
@@ -199,7 +199,6 @@
 
     #general{
         font-size: 26px;
-        margin-bottom: 6px;
     }
 
 
@@ -229,7 +228,7 @@
         margin-left: auto;
         margin-right: auto;
         text-align: center;
-        margin-top: 25%;
+        margin-top: 5%;
     }
 
     #catalogInfo{
@@ -280,6 +279,20 @@
         color: black;
     }
 
+    #profilePic{
+        margin-top: 5%;
+        width: 35%;
+        display: block;
+        height: auto;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #profilePic > img {
+        display: block;
+        width: 100%;
+    }
+
 
 </style>
 
@@ -298,8 +311,8 @@
             <a href="https://www.instagram.com/lunart.miu/" target="blank" title="instagram">
                 <img id="instagram" src="assets/icons/instagram.svg">
             </a>
-            <li><a id="aboutbutton" onclick="showAbout(id)">about</a></li>
-            <li><a id="artworksbutton" class="active" onclick="showArworks(id)">artworks</a></li>
+            <li><a id="aboutbutton" class="active" onclick="showAbout(id)">about</a></li>
+            <li><a id="artworksbutton" onclick="showArworks(id)">artworks</a></li>
         </ul>
 
 
@@ -492,6 +505,10 @@
                         thoughts, the fear which ultimately leads to suicidal tendencies, 
                         the feeling of rejection and other deviations, which society categorizes as pathological.
                         </p>
+                    </div>
+
+                    <div id="profilePic">
+                        <img src="assets/images/profile/miu.jpg"></img>
                     </div>
 
                     <div id="catalogBox">
